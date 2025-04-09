@@ -87,3 +87,16 @@ func (i *Invoice) Process() error {
 
 	return nil
 }
+
+func (i *Invoice) UpdateStatus(newStatus Status) error {
+	if i.Status != StatusPending {
+		return ErrInvalidStatus
+	}
+
+	i.Status = newStatus
+	i.UpdatedAt = time.Now()
+
+	return nil
+}
+
+
