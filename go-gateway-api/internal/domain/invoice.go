@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +15,8 @@ const (
 	StatusRejected Status = "rejected"
 )
 
+const MAX_AMOUNT = 10000
+const APPROVED_PROBABILITY = 0.7
 type Invoice struct {
 	ID string
 	AccountID string
@@ -60,4 +63,27 @@ func NewInvoice(accountID string, amount float64, description string, paymentTyp
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, nil
+}
+
+func (i *Invoice) Process() error {
+	if i.Amount > MAX_AMOUNT {
+		return nil
+	}
+
+	// add random status to simulate the payment gateway
+
+	randomSource := rand.New(rand.NewSource(time.Now().Unix()))
+
+	var newStatus Status
+
+	if randomSource.Float64() <= APPROVED_PROBABILITY {
+		newStatus = StatusApproved
+	} else {
+		newStatus = StatusRejected
+	}
+
+	i.Status = newStatus
+	i.UpdatedAt = time.Now()
+
+	return nil
 }
